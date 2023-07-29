@@ -12,4 +12,4 @@ bin           = @["chatgptclient"]
 
 requires "nim >= 1.6.12"
 requires "nigui >= 0.2.6"
-requires "pyopenai >= 0.1.0"
+requires "pyopenai >= 0.1.1"

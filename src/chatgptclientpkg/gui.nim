@@ -21,7 +21,7 @@ proc getOpenaiToken(envar: string): string =
     else:
         return getEnv(envar)
 
-var api = OpenAiClient(apiKey: getOpenaiToken("OPENAI_API_KEY"))
+var api = newOpenAiClient(getOpenaiToken("OPENAI_API_KEY"))
 
 var chatMessages: seq[JsonNode]
 
