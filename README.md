@@ -20,3 +20,8 @@ nimble install chatgptclient
 # Requisites
 
 - [Nim](https://nim-lang.org)
+
+# Caveats
+- Note that if you are installing Gtk3+ via Homebrew on macOS running on Apple 
+Silicon, you may need to provide the environment variable 
+`DYLD_LIBRARY_PATH="/opt/homebrew/lib"`.
