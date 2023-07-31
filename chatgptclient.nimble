@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.1"
+version       = "0.1.2"
 author        = "jaredmontoya"
 description   = "Native gui client for OpenAI chatgpt"
 license       = "GPL-3.0-or-later"
