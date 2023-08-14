@@ -75,6 +75,8 @@ proc requestAnswer(args: (OpenAiClient, seq[JsonNode], TextArea, Button, Window)
         window.alert("The model that you selected does not exist")
     except InvalidParameters:
         window.alert("Some of the parameters that you provided are invalid")
+    except OSError:
+        window.alert("No Internet")
     except Defect:
         window.alert("Unknown Error")
 
