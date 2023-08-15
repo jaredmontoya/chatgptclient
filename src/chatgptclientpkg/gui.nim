@@ -124,9 +124,11 @@ var settingsArea = newLayoutContainer(Layout_Vertical)
 settingsArea.visible = false
 container.add(settingsArea)
 
-var apiKeyInputComponent = newLayoutContainer(Layout_Horizontal)
+var 
+    apiKeyInputComponent = newLayoutContainer(Layout_Horizontal)
+    apiBaseInputComponent = newLayoutContainer(Layout_Horizontal)
 
-var apiKeyInputLabel = newLabel("OpenAI API key:")
+var apiKeyInputLabel = newLabel("API key:")
 apiKeyInputLabel.heightMode = HeightMode_Fill
 apiKeyInputComponent.add(apiKeyInputLabel)
 
@@ -136,11 +138,22 @@ apiKeyInputComponent.add(apiKeyField)
 
 settingsArea.add(apiKeyInputComponent)
 
+var apiBaseInputLabel = newLabel("API url base:")
+apiBaseInputLabel.heightMode = HeightMode_Fill
+apiBaseInputComponent.add(apiBaseInputLabel)
+
+var apiBaseField = newTextBox()
+apiBaseField.text = api.apiBase
+apiBaseInputComponent.add(apiBaseField)
+
+settingsArea.add(apiBaseInputComponent)
+
 var saveButton = newButton("Save")
 settingsArea.add(saveButton)
 
 saveButton.onClick = proc(event: ClickEvent) =
     api.apiKey = apiKeyField.text
+    api.apiBase = apiBaseField.text
 
 buttonChat.onClick = proc(event: ClickEvent) =
     window.title = "Chat"
