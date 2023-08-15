@@ -1,0 +1,5 @@
+switch("define", "ssl")
+switch("threads", "on")
+switch("app", "gui")
+switch("mm", "arc")
+switch("define", "release")
