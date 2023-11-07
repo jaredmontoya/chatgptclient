@@ -1,7 +1,7 @@
 import chatgptclientpkg/gui
 
 proc ctrlChandler() {.noconv.} =
-    gui.stop()
+  gui.stop()
 
 setControlCHook(ctrlChandler)
 

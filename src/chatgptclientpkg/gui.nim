@@ -10,20 +10,29 @@ import os
 import pyopenai
 
 proc getOpenaiToken(envar: string): string =
-    ## Gets OpenAI token from environment variable
-    if not existsEnv(envar):
-        echo(fmt"Environment variable {envar} is not set, you can get one here: https://platform.openai.com/account/api-keys")
-        echo("add this:")
-        echo(fmt"  export {envar}=your api key")
-        echo("to your .bashrc or .zshrc")
-        echo("or if you are on windows, edit environment variables in the settings")
-        echo("alternatively you can temporarily set it in the gui settings")
-    else:
-        return getEnv(envar)
+  ## Gets OpenAI token from environment variable
+  if not existsEnv(envar):
+    echo(fmt"Environment variable {envar} is not set, you can get one here: https://platform.openai.com/account/api-keys")
+    echo("add this:")
+    echo(fmt"  export {envar}=your api key")
+    echo("to your .bashrc or .zshrc")
+    echo("or if you are on windows, edit environment variables in the settings")
+    echo("alternatively you can temporarily set it in the gui settings")
+  else:
+    return getEnv(envar)
 
-var api = newOpenAiClient(getOpenaiToken("OPENAI_API_KEY"))
-
+var api = OpenAiClient(
+  apiKey: getOpenaiToken("OPENAI_API_KEY")
+)
+var model = "gpt-3.5-turbo"
+var systemPrompt = "You are a helpful assistant."
 var chatMessages: seq[JsonNode]
+chatMessages.add(
+  %*{
+    "role": "system",
+    "content": systemPrompt
+  }
+)
 
 app.init()
 
@@ -55,33 +64,38 @@ var buttonSettings = newButton("Settings")
 buttonSettings.width = 135
 menu.add(buttonSettings)
 
-proc requestAnswer(args: (OpenAiClient, seq[JsonNode], TextArea, Button, Window)) {.thread.} =
-    var (openai, messages, chatDisplay, chatSendButton, window) = args
 
-    try:
-        let resp = openai.createChatCompletion(
-            model = "gpt-3.5-turbo",
-            messages = messages
-        )
-        
-        messages.add(
-            resp["choices"][0]["message"]
-        )
-        let output = resp["choices"][0]["message"]["content"].str
-        chatDisplay.addLine(fmt"[AI]: {output}")
-    except InvalidApiKey:
-        window.alert("The API key that you provided is invalid")
-    except NotFound:
-        window.alert("The model that you selected does not exist")
-    except InvalidParameters:
-        window.alert("Some of the parameters that you provided are invalid")
-    except OSError:
-        window.alert("No Internet")
-    except Defect:
-        window.alert("Unknown Error")
+proc requestAnswerThread(args: (OpenAiClient, seq[JsonNode], TextArea, Button)) {.thread.} =
+  var (openai, messages, chatDisplay, chatSendButton) = args
 
-    chatDisplay.scrollToBottom()
-    chatSendButton.enabled = true
+  let resp = openai.createChatCompletion(
+     model = "gpt-3.5-turbo",
+     messages = messages
+  )
+  messages.add(
+    resp["choices"][0]["message"]
+  )
+  let output = resp["choices"][0]["message"]["content"].str
+  chatDisplay.addLine(fmt"[AI]: {output}")
+
+  chatDisplay.scrollToBottom()
+  chatSendButton.enabled = true
+
+proc requestAnswer(args: (OpenAiClient, seq[JsonNode], TextArea, Button)) =
+  var (openai, messages, chatDisplay, chatSendButton) = args
+
+  let resp = openai.createChatCompletion(
+      model = model,
+      messages = messages
+  )
+  messages.add(
+      resp["choices"][0]["message"]
+  )
+  let output = resp["choices"][0]["message"]["content"].str
+  chatDisplay.addLine(fmt"[AI]: {output}")
+
+  chatDisplay.scrollToBottom()
+  chatSendButton.enabled = true
 
 # Chat
 var chatArea = newLayoutContainer(Layout_Vertical)
@@ -100,22 +114,28 @@ var chatSendButton = newButton("send")
 chatComponent.add(chatSendButton)
 
 chatSendButton.onClick = proc(event: ClickEvent) =
-    chatSendButton.enabled = false
-    case chatTextBox.text
-        of "clear":
-            chatDisplay.text = ""
-            chatMessages = @[]
-            chatSendButton.enabled = true
-        else:
-            chatDisplay.addLine(fmt"[YOU]: {chatTextBox.text}")
-            chatMessages.add(
-                %*{
-                    "role": "user",
-                    "content": chatTextBox.text
-                }
-            )
-            spawn requestAnswer((api, chatMessages, chatDisplay, chatSendButton, window))
-    chatTextBox.text = ""
+  chatSendButton.enabled = false
+  case chatTextBox.text
+    of "clear":
+      chatDisplay.text = ""
+      chatMessages = @[]
+      chatMessages.add(
+        %*{
+          "role": "system",
+          "content": systemPrompt
+        }
+      )
+      chatSendButton.enabled = true
+    else:
+      chatDisplay.addLine(fmt"[YOU]: {chatTextBox.text}")
+      chatMessages.add(
+          %*{
+              "role": "user",
+              "content": chatTextBox.text
+        }
+      )
+      spawn requestAnswerThread((api, chatMessages, chatDisplay, chatSendButton))
+  chatTextBox.text = ""
 
 chatArea.add(chatComponent)
 
@@ -124,50 +144,88 @@ var settingsArea = newLayoutContainer(Layout_Vertical)
 settingsArea.visible = false
 container.add(settingsArea)
 
-var 
-    apiKeyInputComponent = newLayoutContainer(Layout_Horizontal)
-    apiBaseInputComponent = newLayoutContainer(Layout_Horizontal)
+var
+  apiKeyInputComponent = newLayoutContainer(Layout_Horizontal)
+  apiBaseInputComponent = newLayoutContainer(Layout_Horizontal)
+  modelInputComponent = newLayoutContainer(Layout_Horizontal)
+  systemPromptInputComponent = newLayoutContainer(Layout_Horizontal)
+
 
 var apiKeyInputLabel = newLabel("API key:")
 apiKeyInputLabel.heightMode = HeightMode_Fill
 apiKeyInputComponent.add(apiKeyInputLabel)
 
-var apiKeyField = newTextBox()
-apiKeyField.text = api.apiKey
-apiKeyInputComponent.add(apiKeyField)
+var apiKeyInputField = newTextBox()
+apiKeyInputField.text = api.apiKey
+apiKeyInputComponent.add(apiKeyInputField)
 
 settingsArea.add(apiKeyInputComponent)
+
 
 var apiBaseInputLabel = newLabel("API url base:")
 apiBaseInputLabel.heightMode = HeightMode_Fill
 apiBaseInputComponent.add(apiBaseInputLabel)
 
-var apiBaseField = newTextBox()
-apiBaseField.text = api.apiBase
-apiBaseInputComponent.add(apiBaseField)
+var apiBaseInputField = newTextBox()
+apiBaseInputField.text = api.apiBase
+apiBaseInputComponent.add(apiBaseInputField)
 
 settingsArea.add(apiBaseInputComponent)
+
+
+var modelInputLabel = newLabel("Model:")
+modelInputLabel.heightMode = HeightMode_Fill
+modelInputComponent.add(modelInputLabel)
+
+var modelInputField = newTextBox()
+modelInputField.text = model
+modelInputComponent.add(modelInputField)
+
+settingsArea.add(modelInputComponent)
+
+
+var systemPromptInputLabel = newLabel("System Prompt:")
+systemPromptInputLabel.heightMode = HeightMode_Fill
+systemPromptInputComponent.add(systemPromptInputLabel)
+
+var systemPromptInputField = newTextBox()
+systemPromptInputField.text = systemPrompt
+systemPromptInputComponent.add(systemPromptInputField)
+
+settingsArea.add(systemPromptInputComponent)
+
 
 var saveButton = newButton("Save")
 settingsArea.add(saveButton)
 
 saveButton.onClick = proc(event: ClickEvent) =
-    api.apiKey = apiKeyField.text
-    api.apiBase = apiBaseField.text
+  api.apiKey = apiKeyInputField.text
+  api.apiBase = apiBaseInputField.text
+  model = modelInputField.text
+  systemPrompt = systemPromptInputField.text
+  chatDisplay.text = ""
+  chatMessages = @[]
+  if systemPrompt != "":
+    chatMessages.add(
+      %*{
+        "role": "system",
+        "content": systemPrompt
+      }
+    )
 
 buttonChat.onClick = proc(event: ClickEvent) =
-    window.title = "Chat"
-    chatArea.visible = true
-    settingsArea.visible = false
+  window.title = "Chat"
+  chatArea.visible = true
+  settingsArea.visible = false
 
 buttonSettings.onClick = proc(event: ClickEvent) =
-    window.title = "Settings"
-    chatArea.visible = false
-    settingsArea.visible = true
-  
+  window.title = "Settings"
+  chatArea.visible = false
+  settingsArea.visible = true
+
 proc start*() =
-    window.show()
-    app.run()
+  window.show()
+  app.run()
 
 proc stop*() =
-    app.quit()
+  app.quit()

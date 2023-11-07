@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.2"
+version       = "0.2.0"
 author        = "jaredmontoya"
 description   = "Native gui client for OpenAI chatgpt"
 license       = "GPL-3.0-or-later"
@@ -10,6 +10,6 @@ bin           = @["chatgptclient"]
 
 # Dependencies
 
-requires "nim >= 1.6.12"
-requires "nigui >= 0.2.6"
-requires "pyopenai >= 0.1.1"
+requires "nim ^= 2.0.0"
+requires "nigui ^= 0.2.7"
+requires "pyopenai ^= 0.2.0"
