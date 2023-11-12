@@ -11,5 +11,5 @@ bin           = @["chatgptclient"]
 # Dependencies
 
 requires "nim ^= 2.0.0"
-requires "owlkettle#head"
+requires "owlkettle#58c512e5729a44dcbe9fb3ea0be0aa37adc1b7f8"
 requires "pyopenai ^= 0.2.0"
