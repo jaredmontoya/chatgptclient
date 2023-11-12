@@ -14,6 +14,69 @@ viewable App:
   input: string
   entrySensitivity: bool = true
 
+viewable SettingsDialog:
+  apiKey: string
+  apiBase: string
+  model: string
+  systemPrompt: string
+
+method view(dialog: SettingsDialogState): Widget =
+  result = gui:
+    Window:
+      title = "Preferences"
+      defaultSize = (500, 0)
+      HeaderBar {.addTitlebar.}
+
+      Clamp:
+        maximumSize = 500
+        margin = 12
+        Box:
+          orient = OrientY
+          spacing = 12
+
+          PreferencesGroup {.expand: false.}:
+            title = "Settings"
+
+
+            ActionRow:
+              title = "API Key"
+              subtitle = "An API Key to use for requests"
+              Entry {.addSuffix.}:
+                text = dialog.apiKey
+                placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+                proc changed(text: string) =
+                  dialog.apiKey = text
+
+            ActionRow:
+              title = "API url"
+              subtitle = "An API base url"
+              Entry {.addSuffix.}:
+                text = dialog.apiBase
+
+                proc changed(text: string) =
+                  dialog.apiBase = text
+
+            ActionRow:
+              title = "Model"
+              subtitle = "An AI model to use for inference"
+              Entry {.addSuffix.}:
+                text = dialog.model
+                placeholder = "gpt-3.5-turbo"
+
+                proc changed(text: string) =
+                  dialog.model = text
+
+            ActionRow:
+              title = "System Prompt"
+              subtitle = "A system prompt used for the model"
+              Entry {.addSuffix.}:
+                text = dialog.systemPrompt
+                placeholder = "You are a helpful assistant."
+
+                proc changed(text: string) =
+                  dialog.systemPrompt = text
+
 var thread: Thread[AppState]
 
 proc errorNotification(text: string) =
@@ -72,69 +135,28 @@ method view(app: AppState): Widget =
               ModelButton:
                 text = "Preferences"
                 proc clicked() =
-                  discard app.open: gui:
-                    Window:
-                      title = "Preferences"
-                      defaultSize = (500, 0)
-                      HeaderBar {.addTitlebar.}
-
-                      Clamp:
-                        maximumSize = 500
-                        margin = 12
-                        Box:
-                          orient = OrientY
-                          spacing = 12
-
-                          PreferencesGroup {.expand: false.}:
-                            title = "Settings"
-              
-
-                            ActionRow:
-                              title = "API Key"
-                              subtitle = "An API Key to use for requests"
-                              Entry {.addSuffix.}:
-                                text = app.openai.apiKey
-                                placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-
-                                proc changed(text: string) =
-                                  app.openai.apiKey = text
-
-                            ActionRow:
-                              title = "API url"
-                              subtitle = "An API base url"
-                              Entry {.addSuffix.}:
-                                text = app.openai.apiBase
-
-                                proc changed(text: string) =
-                                  app.openai.apiBase = text
-
-                            ActionRow:
-                              title = "Model"
-                              subtitle = "An AI model to use for inference"
-                              Entry {.addSuffix.}:
-                                text = app.model
-                                placeholder = "gpt-3.5-turbo"
-
-                                proc changed(text: string) =
-                                  app.model = text
-
-                            ActionRow:
-                              title = "System Prompt"
-                              subtitle = "A system prompt used for the model"
-                              Entry {.addSuffix.}:
-                                text = app.systemPrompt
-                                placeholder = "You are a helpful assistant."
-
-                                proc changed(text: string) =
-                                  app.systemPrompt = text
-                                  app.messages = @[]
-                                  app.messages.add(
-                                    %*{
-                                      "role": "system",
-                                      "content": app.systemPrompt
-                                    }
-                                  )
-              
+                  let (_, state) = app.open(
+                    gui(
+                      SettingsDialog(
+                        apiKey = app.openai.apiKey,
+                        apiBase = app.openai.apiBase,
+                        model = app.model,
+                        systemPrompt = app.systemPrompt
+                      )
+                    )
+                  )
+                  let dialog = SettingsDialogState(state)
+                  app.openai.apiKey = dialog.apiKey
+                  app.openai.apiBase = dialog.apiBAse
+                  app.model = dialog.model
+                  app.systemPrompt = dialog.systemPrompt
+                  app.messages = @[]
+                  app.messages.add(
+                    %*{
+                      "role": "system",
+                      "content": dialog.systemPrompt
+                    }
+                  )
               ModelButton:
                 text = "About"
                 proc clicked() =
