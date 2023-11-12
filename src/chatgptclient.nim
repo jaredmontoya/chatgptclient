@@ -61,7 +61,6 @@ method view(app: AppState): Widget =
       HeaderBar {.addTitlebar.}:
         MenuButton {.addRight.}:
           icon = "open-menu-symbolic"
-          style = [ButtonFlat]
 
           PopoverMenu:
             Box:
