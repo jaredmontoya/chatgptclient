@@ -3,7 +3,9 @@ import json
 
 import pyopenai
 import owlkettle
-import owlkettle/adw
+
+import chatgptclientpkg/preferences
+import chatgptclientpkg/funcs
 
 
 viewable App:
@@ -14,80 +16,7 @@ viewable App:
   input: string
   entrySensitivity: bool = true
 
-viewable SettingsDialog:
-  apiKey: string
-  apiBase: string
-  model: string
-  systemPrompt: string
-
-method view(dialog: SettingsDialogState): Widget =
-  result = gui:
-    Window:
-      title = "Preferences"
-      defaultSize = (500, 0)
-      HeaderBar {.addTitlebar.}
-
-      Clamp:
-        maximumSize = 500
-        margin = 12
-        Box:
-          orient = OrientY
-          spacing = 12
-
-          PreferencesGroup {.expand: false.}:
-            title = "Settings"
-
-
-            ActionRow:
-              title = "API Key"
-              subtitle = "An API Key to use for requests"
-              Entry {.addSuffix.}:
-                text = dialog.apiKey
-                placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-
-                proc changed(text: string) =
-                  dialog.apiKey = text
-
-            ActionRow:
-              title = "API url"
-              subtitle = "An API base url"
-              Entry {.addSuffix.}:
-                text = dialog.apiBase
-
-                proc changed(text: string) =
-                  dialog.apiBase = text
-
-            ActionRow:
-              title = "Model"
-              subtitle = "An AI model to use for inference"
-              Entry {.addSuffix.}:
-                text = dialog.model
-                placeholder = "gpt-3.5-turbo"
-
-                proc changed(text: string) =
-                  dialog.model = text
-
-            ActionRow:
-              title = "System Prompt"
-              subtitle = "A system prompt used for the model"
-              Entry {.addSuffix.}:
-                text = dialog.systemPrompt
-                placeholder = "You are a helpful assistant."
-
-                proc changed(text: string) =
-                  dialog.systemPrompt = text
-
 var thread: Thread[AppState]
-
-proc errorNotification(text: string) =
-  sendNotification(
-    "error-notification",
-    title = "Error",
-    body = text,
-    icon = "preferences-system-notifications",
-    category = "im.recieved",
-    priority = NotificationHigh
-  )
 
 proc threadProc(app: AppState) {.thread.} =
   try:
@@ -137,7 +66,7 @@ method view(app: AppState): Widget =
                 proc clicked() =
                   let (_, state) = app.open(
                     gui(
-                      SettingsDialog(
+                      PreferencesDialog(
                         apiKey = app.openai.apiKey,
                         apiBase = app.openai.apiBase,
                         model = app.model,
@@ -145,7 +74,7 @@ method view(app: AppState): Widget =
                       )
                     )
                   )
-                  let dialog = SettingsDialogState(state)
+                  let dialog = PreferencesDialogState(state)
                   app.openai.apiKey = dialog.apiKey
                   app.openai.apiBase = dialog.apiBAse
                   app.model = dialog.model
