@@ -18,7 +18,7 @@ var thread: Thread[AppState]
 
 proc errorNotification(text: string) =
   sendNotification(
-    "my-notification",
+    "error-notification",
     title = "Error",
     body = text,
     icon = "preferences-system-notifications",
@@ -79,60 +79,62 @@ method view(app: AppState): Widget =
                       defaultSize = (500, 0)
                       HeaderBar {.addTitlebar.}
 
-                      Box:
-                        orient = OrientY
+                      Clamp:
+                        maximumSize = 500
                         margin = 12
-                        spacing = 12
+                        Box:
+                          orient = OrientY
+                          spacing = 12
 
-                        PreferencesGroup {.expand: false.}:
-                          title = "Settings"
-            
+                          PreferencesGroup {.expand: false.}:
+                            title = "Settings"
+              
 
-                          ActionRow:
-                            title = "API Key"
-                            subtitle = "An API Key to use for requests"
-                            Entry {.addSuffix.}:
-                              text = app.openai.apiKey
-                              placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                            ActionRow:
+                              title = "API Key"
+                              subtitle = "An API Key to use for requests"
+                              Entry {.addSuffix.}:
+                                text = app.openai.apiKey
+                                placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
-                              proc changed(text: string) =
-                                app.openai.apiKey = text
+                                proc changed(text: string) =
+                                  app.openai.apiKey = text
 
-                          ActionRow:
-                            title = "API url"
-                            subtitle = "An API base url"
-                            Entry {.addSuffix.}:
-                              text = app.openai.apiBase
+                            ActionRow:
+                              title = "API url"
+                              subtitle = "An API base url"
+                              Entry {.addSuffix.}:
+                                text = app.openai.apiBase
 
-                              proc changed(text: string) =
-                                app.openai.apiBase = text
+                                proc changed(text: string) =
+                                  app.openai.apiBase = text
 
-                          ActionRow:
-                            title = "Model"
-                            subtitle = "An AI model to use for inference"
-                            Entry {.addSuffix.}:
-                              text = app.model
-                              placeholder = "gpt-3.5-turbo"
+                            ActionRow:
+                              title = "Model"
+                              subtitle = "An AI model to use for inference"
+                              Entry {.addSuffix.}:
+                                text = app.model
+                                placeholder = "gpt-3.5-turbo"
 
-                              proc changed(text: string) =
-                                app.model = text
+                                proc changed(text: string) =
+                                  app.model = text
 
-                          ActionRow:
-                            title = "System Prompt"
-                            subtitle = "A system prompt used for the model"
-                            Entry {.addSuffix.}:
-                              text = app.systemPrompt
-                              placeholder = "You are a helpful assistant."
+                            ActionRow:
+                              title = "System Prompt"
+                              subtitle = "A system prompt used for the model"
+                              Entry {.addSuffix.}:
+                                text = app.systemPrompt
+                                placeholder = "You are a helpful assistant."
 
-                              proc changed(text: string) =
-                                app.systemPrompt = text
-                                app.messages = @[]
-                                app.messages.add(
-                                  %*{
-                                    "role": "system",
-                                    "content": app.systemPrompt
-                                  }
-                                )
+                                proc changed(text: string) =
+                                  app.systemPrompt = text
+                                  app.messages = @[]
+                                  app.messages.add(
+                                    %*{
+                                      "role": "system",
+                                      "content": app.systemPrompt
+                                    }
+                                  )
               
               ModelButton:
                 text = "About"
