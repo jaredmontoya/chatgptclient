@@ -3,6 +3,7 @@ import json
 
 import pyopenai
 import owlkettle
+import owlkettle/adw
 
 import chatgptclientpkg/preferences
 import chatgptclientpkg/funcs
@@ -90,16 +91,12 @@ method view(app: AppState): Widget =
                 text = "About"
                 proc clicked() =
                   discard app.open: gui:
-                    AboutDialog:
-                      programName = "ChatGPT Client"
-                      logo = "chat-symbolic"
+                    AboutWindow:
+                      applicationName = "ChatGPT Client"
+                      developerName = "jaredmontoya"
                       version = "0.2.0"
-                      credits = @{
-                        "Code": @[
-                          "jaredmontoya",
-                        ]
-                      }
-      
+                      issueUrl = "https://github.com/jaredmontoya/chatgptclient/issues"
+                      license = "General Public License version 3.0 or later"
       Box:
         orient = OrientY
         margin = 12
@@ -177,7 +174,7 @@ when isMainModule:
       "content": "You are a helpful assistant."
     }
   )
-  brew(
+  adw.brew(
     "com.jaredmontoya.chatgptclient",
     gui(
       App(
