@@ -1,5 +1,7 @@
 nimcache/
 nimblecache/
 htmldocs/
+
+# Binaries
 chatgptclient
 chatgptclient.exe
