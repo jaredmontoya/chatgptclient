@@ -7,6 +7,6 @@ proc errorNotification*(text: string) =
     title = "Error",
     body = text,
     icon = "preferences-system-notifications",
-    category = "im.recieved",
+    category = "im.error",
     priority = NotificationHigh
   )
