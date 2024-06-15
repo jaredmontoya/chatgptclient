@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "packages": {
+    "owlkettle": {
+      "version": "3.0.0",
+      "vcsRevision": "861092dc931e754650a735af590fbc34becc3942",
+      "url": "https://github.com/can-lehmann/owlkettle",
+      "downloadMethod": "git",
+      "dependencies": [],
+      "checksums": {
+        "sha1": "2319432a190a50ade29f85b1451099b08e71ab38"
+      }
+    },
+    "pyopenai": {
+      "version": "0.2.0",
+      "vcsRevision": "d7774a37b87f33ea7de380cdbef0376333ec1c6f",
+      "url": "https://github.com/jaredmontoya/pyopenai",
+      "downloadMethod": "git",
+      "dependencies": [],
+      "checksums": {
+        "sha1": "88742bb4503ef1c19917a017e1be06a99716070a"
+      }
+    }
+  },
+  "tasks": {}
+}

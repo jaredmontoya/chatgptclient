@@ -1,0 +1,28 @@
+{
+  "depends": [
+    {
+      "method": "fetchzip",
+      "path": "/nix/store/ax2p5d7wz6ipj0y2zpd9rckzzj7a6f0q-source",
+      "rev": "861092dc931e754650a735af590fbc34becc3942",
+      "sha256": "100vxxdpzayj44syfkwn5nrpk5189qiky43xh7w3k908yxrq0jbj",
+      "url": "https://github.com/can-lehmann/owlkettle/archive/861092dc931e754650a735af590fbc34becc3942.tar.gz",
+      "ref": "v3.0.0",
+      "packages": [
+        "owlkettle"
+      ],
+      "srcDir": ""
+    },
+    {
+      "method": "fetchzip",
+      "path": "/nix/store/9y6jsdkji9m5akv0z8v0anvaq7ma56qg-source",
+      "rev": "d7774a37b87f33ea7de380cdbef0376333ec1c6f",
+      "sha256": "03gma68azgbm0ld0ixxkdzzfzhajrcnkd9fq3a44zzpifbnkpk6g",
+      "url": "https://github.com/jaredmontoya/pyopenai/archive/d7774a37b87f33ea7de380cdbef0376333ec1c6f.tar.gz",
+      "ref": "0.2.0",
+      "packages": [
+        "pyopenai"
+      ],
+      "srcDir": "src"
+    }
+  ]
+}
