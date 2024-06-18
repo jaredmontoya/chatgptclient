@@ -96,7 +96,7 @@ method view(app: AppState): Widget =
                       developerName = "jaredmontoya"
                       version = "0.2.0"
                       issueUrl = "https://github.com/jaredmontoya/chatgptclient/issues"
-                      license = "General Public License version 3.0 or later"
+                      licenseType = LicenseGPL_3_0
       Box:
         orient = OrientY
         margin = 12
