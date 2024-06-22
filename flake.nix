@@ -31,7 +31,7 @@
           buildInputs = with pkgs; [ openssl gtk4 libadwaita ];
 
           shellHook = ''
-            echo -e "\033[0;31mThese commands were made available to generate lock.json:\033[0m"
+            echo -e "\033[0;32;4mHeper commands:\033[0m"
             echo "'lock' instead of 'nimble lock'"
             echo "'update' instead of 'nimble upgrade'"
           '';
@@ -40,7 +40,7 @@
         packages.default = pkgs.buildNimPackage {
           pname = "chatgptclient";
           version = "0.2.0";
-          src = pkgs.lib.cleanSource self;
+          src = self;
 
           nativeBuildInputs = with pkgs; [ pkg-config ];
 
