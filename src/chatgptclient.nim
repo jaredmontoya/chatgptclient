@@ -72,8 +72,8 @@ method view(app: AppState): Widget =
                         apiBase = app.openai.apiBase,
                         model = app.model,
                         systemPrompt = app.systemPrompt
-                      )
                     )
+                  )
                   )
                   let dialog = PreferencesDialogState(state)
                   app.openai.apiKey = dialog.apiKey
@@ -101,7 +101,7 @@ method view(app: AppState): Widget =
         orient = OrientY
         margin = 12
         spacing = 6
-        
+
         ScrolledWindow:
           ListBox:
             for message in app.messages:
@@ -162,7 +162,7 @@ method view(app: AppState): Widget =
                 }
               )
 
-when isMainModule: 
+when isMainModule:
   var openai = OpenAiClient(
     apiKey: getEnv("OPENAI_API_KEY")
   )
@@ -180,6 +180,6 @@ when isMainModule:
       App(
         openai = openai,
         messages = messages
-      )
     )
+  )
   )
