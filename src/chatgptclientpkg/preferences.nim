@@ -10,59 +10,54 @@ viewable PreferencesDialog:
 
 method view(dialog: PreferencesDialogState): Widget =
   result = gui:
-    Window:
+    Dialog:
       title = "Preferences"
-      defaultSize = (500, 0)
-      HeaderBar {.addTitlebar.}
 
-      Clamp:
-        maximumSize = 500
-        margin = 12
-        Box:
-          orient = OrientY
-          spacing = 12
+      Box:
+        orient = OrientY
+        spacing = 12
 
-          PreferencesGroup {.expand: false.}:
-            title = "Settings"
+        PreferencesGroup:
+          title = "General"
 
-            ActionRow:
-              title = "API Key"
-              subtitle = "An API Key to use for requests"
-              Entry {.addSuffix.}:
-                text = dialog.apiKey
-                placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+          ActionRow:
+            title = "API Key"
+            subtitle = "An API Key to use for requests"
+            Entry {.addSuffix.}:
+              text = dialog.apiKey
+              placeholder = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
-                proc changed(text: string) =
-                  dialog.apiKey = text
+              proc changed(text: string) =
+                dialog.apiKey = text
 
-            ActionRow:
-              title = "API url"
-              subtitle = "An API base url"
-              Entry {.addSuffix.}:
-                text = dialog.apiBase
+          ActionRow:
+            title = "API url"
+            subtitle = "An API base url"
+            Entry {.addSuffix.}:
+              text = dialog.apiBase
 
-                proc changed(text: string) =
-                  dialog.apiBase = text
+              proc changed(text: string) =
+                dialog.apiBase = text
 
-            ActionRow:
-              title = "Model"
-              subtitle = "An AI model to use for inference"
-              Entry {.addSuffix.}:
-                text = dialog.model
-                placeholder = "gpt-3.5-turbo"
+          ActionRow:
+            title = "Model"
+            subtitle = "An AI model to use for inference"
+            Entry {.addSuffix.}:
+              text = dialog.model
+              placeholder = "gpt-3.5-turbo"
 
-                proc changed(text: string) =
-                  dialog.model = text
+              proc changed(text: string) =
+                dialog.model = text
 
-            ActionRow:
-              title = "System Prompt"
-              subtitle = "A system prompt used for the model"
-              Entry {.addSuffix.}:
-                text = dialog.systemPrompt
-                placeholder = "You are a helpful assistant."
+          ActionRow:
+            title = "System Prompt"
+            subtitle = "A system prompt used for the model"
+            Entry {.addSuffix.}:
+              text = dialog.systemPrompt
+              placeholder = "You are a helpful assistant."
 
-                proc changed(text: string) =
-                  dialog.systemPrompt = text
+              proc changed(text: string) =
+                dialog.systemPrompt = text
 
 export PreferencesDialog
 export PreferencesDialogState
