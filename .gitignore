@@ -7,4 +7,5 @@ htmldocs/
 
 # Binaries
 chatgptclient
+!chatgptclient/
 chatgptclient.exe
