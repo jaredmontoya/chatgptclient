@@ -9,3 +9,6 @@ htmldocs/
 chatgptclient
 !chatgptclient/
 chatgptclient.exe
+nimble.develop
+nimble.paths
+nimbledeps
